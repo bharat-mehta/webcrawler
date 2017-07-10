@@ -43,24 +43,23 @@ public class CrawlPage implements Callable<Page> {
 		LOGGER.info("Reading {} ",page.getUrl() );
 		StopWatch stopWatch = new StopWatch();
 		stopWatch.start();
-		String userAgent = System.getProperty("http.agent");
 		Document document = Jsoup.connect(page.getUrl().toString()).timeout(TIMEOUT).ignoreContentType(true)
-				.userAgent("Mozilla/5.0 (Windows NT 6.1; Win64; x64; rv:25.0) Gecko/20100101 Firefox/25.0").get();
+				.userAgent("Mozilla").get();
  
 		for ( Selector i : Selector.values()){
 			LOGGER.info("Scanning {} for {} ",page.getUrl() , i.toString());
-			processLinks(i.toString() ,document.select(i.toString()));
+			processLinks(i ,document.select(i.toString()));
 		}
 		stopWatch.stop();
         LOGGER.info("Finished reading {} in {} milliseconds", page.getUrl(), stopWatch.getTime());
 		return page;
 	}
  
-	private void processLinks(String selector ,Elements elements) {
+	private void processLinks(Selector selector ,Elements elements) {
 		LOGGER.info("Found {} instances of {}  in {}",elements.toArray().length , selector ,page.getUrl());
 	
 		for (Element element : elements) {
-			String href = element.attr("abs:href");
+			String href = element.attr("abs:href" );
 			if (StringUtils.isBlank(href) ||  href.startsWith("#")) {
 				continue;
 			}
@@ -68,7 +67,7 @@ public class CrawlPage implements Callable<Page> {
 			try {
 				URL nextUrl = new URL( href);
 				
-				boolean isAdded  = page.addURL(selector,nextUrl);
+				boolean isAdded  = page.addURL(selector.toString(),nextUrl);
 				if(isAdded){
 					LOGGER.debug("Found {}", nextUrl);
 					

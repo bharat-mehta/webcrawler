@@ -30,8 +30,8 @@ public class PageCrawler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PageCrawler.class);
 	
-	public  static final int THREAD_COUNT = 100;
-	private static final long PAUSE_TIME = 1000;
+	public  static final int THREAD_COUNT = 5;
+	private static final long PAUSE_TIME = 3000;
  
 	private final Set<URL> visited = new LinkedHashSet<>();
 	private final List<Future<Page>> futures = new ArrayList<>();

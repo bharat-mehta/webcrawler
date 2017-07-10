@@ -9,17 +9,23 @@ package com.bharatmehta.webcrawler;
  */
 public enum Selector {
 	
-	MEDIA("[src]"),
-	LINKS("a[href]"),
-	IMPORTS("[src]");
+	MEDIA("[src]","src"),
+	LINKS("a[href]","href");
 	
+	
+	private String css;
 	private String name;
 
-	private Selector(String name) {
+	private Selector(String css,String name) {
 		this.name = name;
+		this.css = css;
 	}
 	
 	public String toString(){
+		return css;
+	}
+	
+	public String attribute(){
 		return name;
 	}
 	
