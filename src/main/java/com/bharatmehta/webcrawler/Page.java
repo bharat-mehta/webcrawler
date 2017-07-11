@@ -3,10 +3,10 @@
  */
 package com.bharatmehta.webcrawler;
 
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -22,17 +22,24 @@ public class Page  {
 	
 	private final  URL url;
 	
-	private final int depth ;
+	private final  int depth ;
 	
-	private final Map<String, HashSet<URL>> links = new HashMap<String,HashSet<URL>>();
+	private final  URL referrer;
+	
+	private final Map<String, HashSet<URL>> media = new HashMap<String,HashSet<URL>>();
+	
+	private final Map<String, HashSet<URL>> imports = new HashMap<String,HashSet<URL>>();
+	
+	private final Set<URL> hyperLinks = new LinkedHashSet<URL>();
 
 	
 	
 	
-	public Page(URL url, int depth) {
+	public Page(URL url, int depth, URL referrer) {
 		super();
 		this.url = url;
 		this.depth = depth;
+		this.referrer = referrer;
 	}
 
 
@@ -45,60 +52,64 @@ public class Page  {
 	}
 
 
-	public Map<String, HashSet<URL>> getLinks() {
-		return links;
-	}
+	
 
 	
-	
-	public boolean addURL(String selector , String url) throws MalformedURLException{
+	public URL getReferrer() {
+		return referrer;
+	}
+
+
+	public Map<String, HashSet<URL>> getMedia() {
+		return media;
+	}
+
+
+	public Map<String, HashSet<URL>> getImports() {
+		return imports;
+	}
+
+
+	public Set<URL> getHyperLinks() {
+		return hyperLinks;
+	}
+
+
+	public boolean addURL(Selector selector , String tagName, URL url){
 		{
-			if(!links.containsKey(selector)){
-				HashSet<URL> list = new HashSet<URL>();
-				links.put(selector,list);
+			boolean isAdded = false;
+			
+			switch(selector){
+			case LINKS:
+				isAdded = hyperLinks.add(url);
+				break;
+			case IMPORTS:
+				if(!imports.containsKey(tagName)){
+					HashSet<URL> list = new HashSet<URL>();
+					imports.put(tagName,list);
+				}
+				
+				isAdded = imports.get(tagName).add(url);
+				break;
+			case MEDIA:
+				if(!media.containsKey(tagName)){
+					HashSet<URL> list = new HashSet<URL>();
+					media.put(tagName,list);
+				}
+				
+				isAdded = media.get(tagName).add(url);
+				break;
 			}
 			
-			return links.get(selector).add(new URL(url));
+			return isAdded;
+			
 		}
 		
 	}
-	public boolean addURL(String selector , URL url){
-		{
-			if(!links.containsKey(selector)){
-				HashSet<URL> list = new HashSet<URL>();
-				links.put(selector,list);
-			}
-			
-			return links.get(selector).add(url);
-		}
+	
 		
-	}
-	
-	
-	
-	public Set<URL> getURLs(String selector){
-		return links.get(selector);
-	}
-	
-	
-	public int countSelector(String selector){
-	     if(!links.containsKey(selector))
-	    		 return 0;
-	     else
-	    	 return links.get(selector).size();
-	    		 
-	}
 
-	@Override
-	public String toString() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("Page [url=");
-		builder.append(url);
-		builder.append(", links=");
-		builder.append(links);
-		builder.append("]");
-		return builder.toString();
-	}
+	
 	
 	
 	public String json(){

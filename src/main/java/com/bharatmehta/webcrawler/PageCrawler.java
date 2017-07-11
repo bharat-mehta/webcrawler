@@ -58,7 +58,7 @@ public class PageCrawler {
 		LOGGER.info("Started crawling {} for {} depth and {} link ", rootURL, maxDepth , maxLinks );
 		stopWatch.start();
 		
-		submitForCrawling(rootURL , 0);
+		submitForCrawling(rootURL , 0, null);
  
 		while (cancrawl()) ;
 		stopWatch.stop();
@@ -118,7 +118,7 @@ public class PageCrawler {
 	
  
 	private void addNewURLs(Page page) {
-		final Set<URL> urLs = page.getURLs(Selector.LINKS.toString());
+		final Set<URL> urLs = page.getHyperLinks();
 		if(urLs != null){
 			for (URL url : urLs) {
 				if (url.toString().contains("#")) {
@@ -129,17 +129,17 @@ public class PageCrawler {
 					}
 				}
 	 
-				submitForCrawling(url , page.getDepth() + 1);
+				submitForCrawling(url , page.getDepth() + 1,page.getUrl());
 			}
 		}
 		
 	}
  
-	private void submitForCrawling(URL url , int depth )  {
+	private void submitForCrawling(URL url , int depth ,URL referrer)  {
 		if (shouldScan(url, depth)) {
 			visited.add(url);
  
-			CrawlPage grabPage = new CrawlPage(url ,  depth);
+			CrawlPage grabPage = new CrawlPage(url , depth , referrer);
 			Future<Page> future = executorService.submit(grabPage);
 		
 			futures.add(future);

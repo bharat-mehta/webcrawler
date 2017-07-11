@@ -27,11 +27,13 @@ public class CrawlPageTest {
 	@Test
 	public void basicTest() throws MalformedURLException, ExecutionException, InterruptedException {
 		ExecutorService executorService = Executors.newSingleThreadExecutor();
-		Future<Page> future = executorService.submit(new CrawlPage(new URL("http://example.com"),1));
+		Future<Page> future = executorService.submit(new CrawlPage(new URL("http://example.com"),1,null));
 		Page done = future.get();
-		assertNotNull(done.getLinks());
-		assertTrue(done.countSelector("a[href]") > 0);
+		assertNotNull(done.getHyperLinks());
+		assertNotNull(done.getMedia());
+		assertNotNull(done.getImports());
 		
+		assertTrue(!done.getHyperLinks().isEmpty() || !done.getMedia().isEmpty() || !done.getImports().isEmpty());
 	}
 	
 	

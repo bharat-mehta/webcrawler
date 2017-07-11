@@ -5,7 +5,6 @@ package com.bharatmehta.webcrawler;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.net.URL;
 
 import org.junit.Test;
 
@@ -23,7 +22,7 @@ public class PageCrawlerTest {
 	 */
 	@Test
 	public void testGo() throws MalformedURLException, IOException, InterruptedException {
-		PageCrawler crawler = new PageCrawler(("http://wiprodigital.com"), Integer.MAX_VALUE, Integer.MAX_VALUE);
+		PageCrawler crawler = new PageCrawler(("http://www.wiprodigital.com"), 1, 10);
 		crawler.crawl();
 	}
 

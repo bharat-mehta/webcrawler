@@ -10,7 +10,8 @@ package com.bharatmehta.webcrawler;
 public enum Selector {
 	
 	MEDIA("[src]","src"),
-	LINKS("a[href]","href");
+	LINKS("a[href]","href"),
+	IMPORTS("link[href]","href");
 	
 	
 	private String css;
