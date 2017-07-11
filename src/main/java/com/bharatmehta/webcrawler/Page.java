@@ -26,6 +26,12 @@ public class Page  {
 	
 	private final  URL referrer;
 	
+	private  int statusCode;
+	
+	private  long milliSeconds;
+	
+	
+	
 	private final Map<String, HashSet<URL>> media = new HashMap<String,HashSet<URL>>();
 	
 	private final Map<String, HashSet<URL>> imports = new HashMap<String,HashSet<URL>>();
@@ -52,6 +58,7 @@ public class Page  {
 	}
 
 
+	
 	
 
 	
@@ -107,11 +114,29 @@ public class Page  {
 		
 	}
 	
-		
+	
+
+	public int getStatusCode() {
+		return statusCode;
+	}
+
+
+	public void setStatusCode(int statusCode) {
+		this.statusCode = statusCode;
+	}
+
 
 	
-	
-	
+	public long getMilliSeconds() {
+		return milliSeconds;
+	}
+
+
+	public void setMilliSeconds(long milliSeconds) {
+		this.milliSeconds = milliSeconds;
+	}
+
+
 	public String json(){
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
@@ -121,4 +146,5 @@ public class Page  {
 	}
 	
 
+	
 }

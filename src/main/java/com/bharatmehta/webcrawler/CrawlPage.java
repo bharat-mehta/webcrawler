@@ -7,6 +7,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.lang3.time.StopWatch;
+import org.jsoup.Connection;
+import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
@@ -46,14 +49,30 @@ public class CrawlPage implements Callable<Page> {
 		LOGGER.info("Reading {} ", url );
 		
 		Page page = new Page(url, depth, referrer);
-		Document document =  Utilities.connect(page.getUrl(), page.getReferrer(), TIMEOUT);
-	 
-		for ( Selector i : Selector.values()){
-				LOGGER.info("Scanning {} for {} ",page.getUrl() , i.toString());
-				final Elements elements = document.select(i.toString());
-				findElementsInPage( page ,i ,elements);
-		}
+		StopWatch stopWatch = new StopWatch();
+		stopWatch.start();
+		try{
+
+			Connection.Response  response =  Utilities.connect(page.getUrl(), page.getReferrer(), TIMEOUT);
+			page.setStatusCode(response.statusCode());
+			if(response != null && response.statusCode() == 200){
+				Document document = response.parse();
+				for ( Selector i : Selector.values()){
+					LOGGER.info("Scanning {} for {} ",page.getUrl() , i.toString());
+					final Elements elements = document.select(i.toString());
+					findElementsInPage( page ,i ,elements);
+				}
+			}
+
 			
+		}catch(HttpStatusException e){
+			page.setStatusCode(e.getStatusCode());
+			LOGGER.error("Exception while reading {} " ,url,e);
+		}finally{
+			stopWatch.stop();
+			page.setMilliSeconds(stopWatch.getTime());
+		}
+
 		return page;
 	}
 

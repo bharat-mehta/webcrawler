@@ -7,7 +7,6 @@ import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -19,6 +18,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -34,7 +35,7 @@ public class PageCrawler {
 	
 	private static final Logger LOGGER = LoggerFactory.getLogger(PageCrawler.class);
 	
-	public  static final int THREAD_COUNT = 5;
+	private static final int THREAD_COUNT = 5;
 	private static final long PAUSE_TIME = 3000;
  
 	private final Set<URL> visited = new LinkedHashSet<>();
@@ -101,7 +102,7 @@ public class PageCrawler {
 			if (future.isDone()) {
 				iterator.remove();
 				try {
-					final Page page = future.get();
+					final Page page = future.get(10 , TimeUnit.SECONDS);
 					LOGGER.info(page.json());
 					File file = Utilities.file(reportDirectory , page);
 					FileUtils.writeStringToFile(file, page.json(), "UTF-8");
@@ -113,6 +114,9 @@ public class PageCrawler {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}catch(IOException e){
+					e.printStackTrace();
+				} catch (TimeoutException e) {
+					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 			}
@@ -163,7 +167,7 @@ public class PageCrawler {
 		if (visited.contains(url)) {
 			return false;
 		}
-		if (!url.getHost().equals(rootURL.getHost())) {
+		if (!url.getHost().replaceFirst("www.", "").equals(rootURL.getHost().replaceFirst("www.", ""))) {
 			return false;
 		}
 		

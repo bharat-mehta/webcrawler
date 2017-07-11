@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.net.URL;
 
 import org.apache.commons.validator.routines.UrlValidator;
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -35,23 +36,23 @@ public class Utilities {
 	}
 	
 	
-	public static  Document connect(URL url , URL referrer , int timeout) throws IOException {
-		Document document;
+	public static  Connection.Response connect(URL url , URL referrer , int timeout) throws IOException  {
+		 Connection.Response response = null;
 		if(referrer != null){
-			 document = Jsoup.connect(url.toString())
+			 response = Jsoup.connect(url.toString())
 					.timeout(timeout)
 					.ignoreContentType(true)
 					.userAgent("Mozilla")
 					.referrer(referrer.toString())
-					.get();
+					.execute();
 		}else{
-			 document = Jsoup.connect(url.toString())
+			 response = Jsoup.connect(url.toString())
 					.timeout(timeout)
 					.ignoreContentType(true)
 					.userAgent("Mozilla")
-					.get();
+					.execute();
 		}
-		return document;
+		return response;
 	}
 	
 	
