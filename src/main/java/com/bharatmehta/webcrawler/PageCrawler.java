@@ -3,8 +3,11 @@
  */
 package com.bharatmehta.webcrawler;
 
+import java.io.File;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -17,6 +20,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.StopWatch;
 import org.slf4j.Logger;
@@ -43,13 +47,15 @@ public class PageCrawler {
 	
 	private final int maxLinks ;
 	
+	private final String reportDirectory;
+	
  
  
 	public PageCrawler(String urlBase, int maxDepth, int maxLinks) throws MalformedURLException {
-		urlBase = urlBase.toString().replaceAll("(.*//.*/).*", "$1");
 		this.rootURL = new URL(urlBase);
 		this.maxDepth = maxDepth;
 		this.maxLinks = maxLinks;
+		this.reportDirectory = Utilities.baseDirectory(rootURL);
 	}
 
 	public void crawl()  {
@@ -58,7 +64,7 @@ public class PageCrawler {
 		LOGGER.info("Started crawling {} for {} depth and {} link ", rootURL, maxDepth , maxLinks );
 		stopWatch.start();
 		
-		submitForCrawling(rootURL , 0, null);
+		submitForCrawling(rootURL , 1, null);
  
 		while (cancrawl()) ;
 		stopWatch.stop();
@@ -97,12 +103,16 @@ public class PageCrawler {
 				try {
 					final Page page = future.get();
 					LOGGER.info(page.json());
+					File file = Utilities.file(reportDirectory , page);
+					FileUtils.writeStringToFile(file, page.json(), "UTF-8");
 					pageSet.add(page);
 				}catch (ExecutionException e) {
 					// TODO Auto-generated catch block
 					e.printStackTrace();
 				} catch (InterruptedException e) {
 					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}catch(IOException e){
 					e.printStackTrace();
 				}
 			}
