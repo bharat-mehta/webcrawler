@@ -28,6 +28,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
  
 /**
+ * 
+ * Class which creates threads and runs instances of {@link CrawlPage}
  * @author Bharat.Mehta
  *
  */
@@ -36,23 +38,36 @@ public class PageCrawler {
 	private static final Logger LOGGER = LoggerFactory.getLogger(PageCrawler.class);
 	
 	private static final int THREAD_COUNT = 5;
-	private static final long PAUSE_TIME = 3000;
  
 	private final Set<URL> visited = new LinkedHashSet<>();
 	private final List<Future<Page>> futures = new ArrayList<>();
 	private final ExecutorService executorService = Executors.newFixedThreadPool(THREAD_COUNT);
  
+	
+	/**
+	 * URL to be scanned
+	 */
 	private final URL rootURL;
  
+	/**
+	 * Depth at which crawler will
+	 */
 	private final int maxDepth ;
 	
+	/**
+	 * Maximum number of pages/links to be visited by the crawler
+	 */
 	private final int maxLinks ;
 	
+	/**
+	 * Directory where crawling report is to be generated
+	 */
 	private final String reportDirectory;
 	
  
  
 	public PageCrawler(String urlBase, int maxDepth, int maxLinks) throws MalformedURLException {
+		urlBase = urlBase.toLowerCase().replaceFirst("www.", "");
 		this.rootURL = new URL(urlBase);
 		this.maxDepth = maxDepth;
 		this.maxLinks = maxLinks;
@@ -65,12 +80,15 @@ public class PageCrawler {
 		LOGGER.info("Started crawling {} for {} depth and {} link ", rootURL, maxDepth , maxLinks );
 		stopWatch.start();
 		
+		//In start there is no referrer
 		submitForCrawling(rootURL , 1, null);
  
 		while (cancrawl()) ;
+		
 		stopWatch.stop();
  
-		LOGGER.info("Found {} URLs in {} in {} millseconds ", visited.size() , rootURL, stopWatch.getTime() );
+		LOGGER.info("It took {} milliseconds to crawl {} , {} levels and  {} links.", stopWatch.getTime() , rootURL, maxDepth , visited.size()  );
+		LOGGER.info("Crawling report is generated in directory : {}", reportDirectory );
 	}
  
 	
@@ -101,27 +119,31 @@ public class PageCrawler {
 			Future<Page> future = iterator.next();
 			if (future.isDone()) {
 				iterator.remove();
+				
 				try {
+					
 					final Page page = future.get(10 , TimeUnit.SECONDS);
 					LOGGER.info(page.json());
+					//Write data to the file  in UTF-8
 					File file = Utilities.file(reportDirectory , page);
 					FileUtils.writeStringToFile(file, page.json(), "UTF-8");
+					
 					pageSet.add(page);
+					
 				}catch (ExecutionException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.error("Exception while running the crawler :",e );
 				} catch (InterruptedException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.error("Exception :",e );
+					 Thread.currentThread().interrupt();
 				}catch(IOException e){
-					e.printStackTrace();
+					LOGGER.error("Exception while writing the page related data:",e );
 				} catch (TimeoutException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+					LOGGER.error("Exception :",e );
 				}
 			}
 		}
  
+		//Adding new URLS
 		for (Page page : pageSet) {
 			addNewURLs(page);
 		}
@@ -137,13 +159,17 @@ public class PageCrawler {
 			for (URL url : urLs) {
 				if (url.toString().contains("#")) {
 					try {
-						url = new URL(StringUtils.substringBefore(url.toString(), "#"));
+						url = new URL(
+								StringUtils.substringBefore(url.toString(), "#")
+								.toLowerCase()
+								.replaceFirst("www.", ""));
 					} catch (MalformedURLException e) {
 						LOGGER.error("Exception ", e);
 					}
 				}
 	 
-				submitForCrawling(url , page.getDepth() + 1,page.getUrl());
+				//Increase the current depth of the URL by 1 and set the referrer
+				submitForCrawling(url , page.getDepth() + 1, page.getUrl());
 			}
 		}
 		
@@ -186,7 +212,7 @@ public class PageCrawler {
 	private void pause() {
 		try
 		{
-		    Thread.sleep(PAUSE_TIME); // Sleep for one second
+			TimeUnit.SECONDS.sleep(1);;
 		}
 		catch (InterruptedException e)
 		{

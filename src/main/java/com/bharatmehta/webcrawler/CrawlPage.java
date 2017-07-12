@@ -17,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Callable representing action of crawling a web page
  * @author Bharat.Mehta
  *
  */
@@ -109,7 +110,7 @@ public class CrawlPage implements Callable<Page> {
 				}
 				LOGGER.debug("Found {} -->  {} ", element.tagName(), url);
 			} catch (MalformedURLException e) {
-				e.printStackTrace();
+				LOGGER.error("Invalid URL ",e);
 			}
 		}
 	}

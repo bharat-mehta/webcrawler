@@ -14,28 +14,54 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 /**
+ * 
+ * Class denoting a web page
  * @author Bharat.Mehta
  *
  */
 public class Page  {
 	
 	
+	/**
+	 * URL of the page
+	 */
 	private final  URL url;
 	
+	/**
+	 * Depth of the URL from the referrer
+	 */
 	private final  int depth ;
 	
+	/**
+	 * Referrer of the URL, Will be null if no referrer
+	 */
 	private final  URL referrer;
 	
+	/**
+	 * HTTP status code on connecting to the page URL
+	 */
 	private  int statusCode;
 	
+	/**
+	 * Milliseconds to scan the whole page
+	 */
 	private  long milliSeconds;
 	
 	
 	
+	/**
+	 *  HTML elements with src attribute
+	 */
 	private final Map<String, HashSet<URL>> media = new HashMap<String,HashSet<URL>>();
 	
+	/**
+	 * HTML links like CSS or some other imported page
+	 */
 	private final Map<String, HashSet<URL>> imports = new HashMap<String,HashSet<URL>>();
 	
+	/**
+	 * Anchor tags in the page
+	 */
 	private final Set<URL> hyperLinks = new LinkedHashSet<URL>();
 
 	
@@ -136,7 +162,42 @@ public class Page  {
 		this.milliSeconds = milliSeconds;
 	}
 
+	
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("Page [url=");
+		builder.append(url);
+		builder.append(", depth=");
+		builder.append(depth);
+		builder.append(", referrer=");
+		builder.append(referrer);
+		builder.append(", statusCode=");
+		builder.append(statusCode);
+		builder.append(", milliSeconds=");
+		builder.append(milliSeconds);
+		builder.append("]");
+		return builder.toString();
+	}
+
+	
+	
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((url == null) ? 0 : url.hashCode());
+		return result;
+	}
+
+
+	
+	/**
+	 * Returns the JSON version of the Page which is used for reporting
+	 * @return
+	 */
 	public String json(){
 		Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	
