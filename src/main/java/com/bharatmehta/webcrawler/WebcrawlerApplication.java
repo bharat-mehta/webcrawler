@@ -1,12 +1,11 @@
 package com.bharatmehta.webcrawler;
 
-import org.springframework.boot.SpringApplication;
-import org.springframework.boot.autoconfigure.SpringBootApplication;
+import java.net.MalformedURLException;
 
-@SpringBootApplication
 public class WebcrawlerApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(WebcrawlerApplication.class, args);
+	public static void main(String[] args) throws NumberFormatException, MalformedURLException {
+		
+		new PageCrawler(args[0], Integer.parseInt(args[1]), Integer.parseInt(args[2]));
 	}
 }

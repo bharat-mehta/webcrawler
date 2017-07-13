@@ -8,13 +8,13 @@ import java.net.URL;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.lang3.time.StopWatch;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.jsoup.Connection;
 import org.jsoup.HttpStatusException;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Callable representing action of crawling a web page
@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CrawlPage implements Callable<Page> {
 	
-	private static final Logger LOGGER = LoggerFactory.getLogger(CrawlPage.class);
+	private static final Logger LOGGER = LogManager.getLogger(CrawlPage.class.getName());
 
 	private static final int TIMEOUT = 120000;   //Two minute timeout 
 	
