@@ -85,6 +85,7 @@ public class PageCrawler {
  
 		while (cancrawl()) ;
 		
+		executorService.shutdown();
 		stopWatch.stop();
  
 		LOGGER.info("It took {} milliseconds to crawl {} , {} levels and  {} links.", stopWatch.getTime() , rootURL, maxDepth , visited.size()  );
