@@ -1,14 +1,12 @@
 # webcrawler
 
-This application is developed to crawl any website. 
-
-The application creates fixed thread pool to read the given URL.
+This application is developed to crawl any website. The application uses jsoup library to parse the webpages. It reads and list all HTML elements with src, href and rel attributes. The application will not read external URLs in a web page.
 
 ### How to build and run ?
 
 * Install Java 8
 * Run `mvn clean install ' . This will run the tests and create executable jar
-* To use the application , run `java -jar  webcrawler-0.1-SNAPSHOT.jar http://wiprodigital.com 100 50000` where `100` denotes the maxDepth and `50000` denotes max links. 
+* To use the application , run `java -jar  webcrawler-0.1-SNAPSHOT.jar http://wiprodigital.com 100 50000` where `100` denotes the maxDepth and `50000` denotes maxLinks. In case the no values are given for maxDepths and maxLinks , 100 and 50000 will be used a default value.
 * To use the application the user must specify a URL in command line arguments
 
 
