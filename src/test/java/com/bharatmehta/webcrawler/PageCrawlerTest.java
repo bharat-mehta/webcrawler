@@ -22,7 +22,7 @@ public class PageCrawlerTest {
 	 */
 	@Test
 	public void testGo() throws MalformedURLException, IOException, InterruptedException {
-		PageCrawler crawler = new PageCrawler(("http://hcentive.com"), 1000, 100);
+		PageCrawler crawler = new PageCrawler(("http://example.com"), 10, 10);
 		crawler.crawl();
 	}
 
