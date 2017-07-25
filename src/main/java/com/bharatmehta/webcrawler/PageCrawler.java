@@ -37,7 +37,7 @@ public class PageCrawler {
 	
 	private static final Logger LOGGER = LogManager.getLogger(PageCrawler.class.getName());
 	
-	private static final int THREAD_COUNT = 5;
+	private static final int THREAD_COUNT = 15;
  
 	private final Set<URL> visited = new LinkedHashSet<>();
 	private final List<Future<Page>> futures = new ArrayList<>();
@@ -84,6 +84,9 @@ public class PageCrawler {
 		submitForCrawling(rootURL , 1, null);
  
 		while (cancrawl()) ;
+		
+		
+		executorService.shutdown();
 		
 		stopWatch.stop();
  
