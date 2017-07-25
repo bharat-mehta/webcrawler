@@ -6,6 +6,7 @@ The application creates fixed thread pool to read the given URL.
 
 ### How to build and run ?
 
+* Install Java 8
 * Run `mvn clean install ' . This will run the tests and create executable jar
 * To use the application , run `java -jar  webcrawler-0.1-SNAPSHOT.jar http://wiprodigital.com 100 50000` where `100` denotes the maxDepth and `50000` denotes max links. 
 * To use the application the user must specify a URL in command line arguments
@@ -105,3 +106,6 @@ After scanning/reading a webpage, application creates a page.json file like :
 }
 ```
 
+### Note
+
+I have used just 5 threads in the threadpool to save from   `Too many requests` error
